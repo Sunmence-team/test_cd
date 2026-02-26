@@ -1,12 +1,19 @@
 name: Deploy React App via FTP
 
 on:
-  push:
-    branches:
-      - main
+  workflow_run:
+    workflows: ["CI"]
+    types:
+      - completed
+  
+      # push:
+  #   branches:
+  #     - main
 
 jobs:
   deploy:
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +26,8 @@ jobs:
           node-version: '22'
 
       - name: Install Dependencies
-        run: npm install
+        # run: npm install
+        run: npm ci
 
       - name: Build Project
         run: npm run build
